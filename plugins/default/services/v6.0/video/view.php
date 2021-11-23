@@ -17,8 +17,28 @@ if(!$video) {
 		$params['OssnServices']->throwError('200', 'Invalid video');
 }
 unset($video->data);
+
+$entity = ossn_get_entities(array(
+		'type'       => 'object',
+		'owner_guid' => $video->guid,
+		'subtype'    => 'file:video',
+));
+$comments       = new OssnComments();
+$total_comments = $comments->countComments($entity[0]->guid, 'entity');
+if(!$total_comments) {
+		$total_comments = 0;
+}
+$OssnLikes = new OssnLikes();
+$likes     = $OssnLikes->CountLikes($entity[0]->guid, 'entity');
+if(!$likes) {
+		$likes = 0;
+}
 $video->{'file:video'} = $video->getFileURL();
 $video->{'file:cover'} = $video->getCoverURL();
+$video->total_comments = $total_comments;
+$video->total_likes    = $likes;
+$video->cl_entity_guid = $entity[0]->guid;
+
 $params['OssnServices']->successResponse(array(
 		'video' => $video,
 ));

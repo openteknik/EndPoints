@@ -41,8 +41,26 @@ $results = array();
 if($all) {
 		foreach($all as $video) {
 				unset($video->data);
+				$comments = new OssnComments();
+				$entity   = ossn_get_entities(array(
+						'type'       => 'object',
+						'owner_guid' => $video->guid,
+						'subtype'    => 'file:video',
+				));
+				$total_comments = $comments->countComments($entity[0]->guid, 'entity');
+				if(!$total_comments) {
+						$total_comments = 0;
+				}
+				$OssnLikes = new OssnLikes();
+				$likes     = $OssnLikes->CountLikes($entity[0]->guid, 'entity');
+				if(!$likes) {
+						$likes = 0;
+				}
 				$video->{'file:video'} = $video->getFileURL();
 				$video->{'file:cover'} = $video->getCoverURL();
+				$video->total_comments = $total_comments;
+				$video->total_likes    = $likes;
+				$video->cl_entity_guid = $entity[0]->guid;
 				$results[]             = $video;
 		}
 }
