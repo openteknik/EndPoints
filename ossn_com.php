@@ -41,6 +41,7 @@ function premium_endpoints_api($hook, $type, $methods, $params) {
 		$methods['v6.0'][] = 'video/delete';				
 		$methods['v6.0'][] = 'video/list';				
 		$methods['v6.0'][] = 'video/view';				
+		$methods['v6.0'][] = 'video/status';				
 		
 		$methods['v6.0'][] = 'mp3/add';						
 		$methods['v6.0'][] = 'mp3/view';						

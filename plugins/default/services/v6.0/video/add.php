@@ -65,39 +65,18 @@ if(!$error_cnt) {
  
 		$video = new Videos;
 		$extensions = array('3gp', 'mov', 'avi', 'wmv', 'flv', 'mp4');
-		if(in_array($extension, $extensions)){
-				$hash = md5($_FILES['video']['tmp_name'] . time() . rand());
-				$newfile_name = $hash . '.mp4';
-				$dir = ossn_get_userdata("tmp/videos/");
-				$newfile = $dir . $newfile_name;
-				if(!is_dir($dir)){
-						mkdir($dir, 0755, true); 
-				}
-	 	 
-				$vtk = input('vtk');
-				$progress_file = $dir . $vtk . '.progress.txt';
-				/* error simulation if($video->convert($_FILES['video']['tmp_name']['arsalan'], $newfile, $progress_file)){ */
-				if($video->convert($_FILES['video']['tmp_name'], $newfile, $progress_file)){
-						$_FILES['video']['tmp_name'] = $newfile;
-						$_FILES['video']['type'] = 'video/mp4';
-						$_FILES['video']['name'] = $newfile_name;
-						$_FILES['video']['size'] = filesize($newfile);
-				} else {
-						$error_cnt++;
-						$error['errors'][] =	ossn_print('video:com:upload:conversion:failed');
-				}
+		if(!in_array($extension, $extensions)){
+				$error_cnt++;
+				$error['errors'][] = ossn_print('video:com:upload:conversion:failed');
 		}
 } 
 if(!$error_cnt) {
-		if($video->addVideo($title, $description,  $container_guid, $container_type)){
-				$guid = $video->getObjectId();
+		if($guid = $video->addVideo($title, $description,  $container_guid, $container_type)){
 				$video = ossn_get_video($guid);
-					 
 				if(isset($newfile)){
 						unlink($newfile);
 						unlink($progress_file);		 
 				}
-				sleep(1); // allow a little pause to see the last (100% chunk) of progress bar before proceeding to view page
 				
 				$video->{'file:video'} = $video->getFileURL();
 				$video->{'file:cover'} = $video->getCoverURL();
