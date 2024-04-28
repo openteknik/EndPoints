@@ -38,8 +38,16 @@ $all  = $poll->getAll($args);
 $args['count'] = true;
 $count         = $poll->getAll($args);
 
+$results = false;
+if($all) {
+		$results = array();
+		foreach ($all as $pitem) {
+				$pitem->votes = $pitem->getVotes();
+				$results[]    = $pitem;
+		}
+}
 $params['OssnServices']->successResponse(array(
-		'list'   => $all,
+		'list'   => $results,
 		'offset' => input('offset'),
 		'count'  => $count,
 ));

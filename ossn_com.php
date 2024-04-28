@@ -32,6 +32,7 @@ function premium_endpoints_api($hook, $type, $methods, $params) {
 		$methods['v6.0'][] = 'poll/delete';		
 		$methods['v6.0'][] = 'poll/list';		
 		$methods['v6.0'][] = 'poll/view';		
+		$methods['v6.0'][] = 'poll/voted';		
 
 		$methods['v6.0'][] = 'story/add';		
 		$methods['v6.0'][] = 'story/delete';		

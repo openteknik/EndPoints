@@ -11,13 +11,26 @@
 if(!com_is_active('Polls')) {
 		$params['OssnServices']->throwError('201', ossn_print('ossnservices:component:notfound'));
 }
-$guid = input('guid');
-
-$object = ossn_poll_get($guid);
-if(!$object) {
-		$params['OssnServices']->throwError('200', 'Invalid Poll');
+$uguid = input('uguid');
+$user  = false;
+if($uguid) {
+		$user = ossn_user_by_guid($uguid);
 }
-$object->votes = $object->getVotes();
+if(!$user) {
+		$params['OssnServices']->throwError('103', ossn_print('ossnservices:nouser'));
+}
+$vc = 'no';
+OssnSession::assign('OSSN_USER', $user);
+$guid = input('guid');
+$poll = ossn_poll_get($guid);
+if(!$poll) {
+		$params['OssnServices']->throwError('200', ossn_print('ossnservices:undefined:poll'));
+}
+$voted = $poll->hasVoted();
+if($voted) {
+		$vc = 'yes';
+}
+OssnSession::assign('OSSN_USER', $old_user);
 $params['OssnServices']->successResponse(array(
-		'poll' => $object,
+		'voted' => $vc,
 ));
