@@ -13,12 +13,19 @@ if(!com_is_active('Events')) {
 }
 $guid = input('guid');
 
-$object = ossn_get_event($guid);
-if(!$object) {
+$event = ossn_get_event($guid);
+if(!$event) {
 		$params['OssnServices']->throwError('200', 'Invalid Event');
 }
-unset($object->{'file:event:photo'});
-$object->icon_url = $object->iconURL('master');
+$comment_wall = ossn_get_entities(array(
+		'type'       => 'object',
+		'subtype'    => 'event:wall',
+		'owner_guid' => $event->guid,
+));
+$comments = $comment_wall[0];
+unset($event->{'file:event:photo'});
+$event->icon_url       = $event->iconURL('master');
+$event->cl_entity_guid = $comments->guid;
 $params['OssnServices']->successResponse(array(
-		'event' => $object,
+		'event' => $event,
 ));
